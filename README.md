@@ -14,11 +14,8 @@ To get a better basic understanding for SAML in general, read https://github.com
 Using ```composer```: 
 
 ``` 
-composer require "kingstarter/laravel-saml": "dev-master"
+composer require "kingstarter/laravel-saml":"dev-master"
 ```
-
-IMPORTANT NOTE: Currently the git package has problems finding the ServiceProvider.
-
 
 Add the service provider to ```config/app.php```
 
