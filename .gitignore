@@ -1,0 +1,20 @@
+#####################################
+# KingStarter specific ignore rules #
+#####################################
+
+# Directories
+#############
+build
+bin
+logs
+vendor
+
+########################
+# General ignore rules #
+########################
+
+# General files
+###############
+.*.swp
+*~
+
