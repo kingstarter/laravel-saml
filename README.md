@@ -27,7 +27,67 @@ There is one configuration file to publish and the config/filesystem.php file th
 ```
 php artisan vendor:publish --tag="saml_config"
 ```
-will publish the config/saml.php file. Within the saml.php config file the SAML Service Provider array needs to be filled. An example for a local address is given.
+
+will publish the config/saml.php file. 
+
+#### SAML SP entries
+
+Within the saml.php config file the SAML Service Provider array needs to be filled. Subsequently an example from the config/saml.php file:
+
+```
+'sp' => [        
+    
+    /**
+     * Sample SP entry
+     * The entry is identified by the base64 encoded URL. This example shows a possible entry for
+     * a SimpleSamlPhp service provider running on localhost:
+     * 
+     * Sample URL:         https://localhost/samlsp/module.php/saml/sp/saml2-acs.php/default-sp
+     * Base64 encoded URL: aHR0cHM6Ly9sb2NhbGhvc3Qvc2FtbHNwL21vZHVsZS5waHAvc2FtbC9zcC9zYW1sMi1hY3MucGhwL2RlZmF1bHQtc3A=
+     */
+    'aHR0cHM6Ly9sb2NhbGhvc3Qvc2FtbHNwL21vZHVsZS5waHAvc2FtbC9zcC9zYW1sMi1hY3MucGhwL2RlZmF1bHQtc3A=' => [
+    
+        // The destination is the consuming SAML URL. This might be a SamlAuthController receiving the SAML response.  
+        'destination' => 'https://localhost/samlsp/module.php/saml/sp/saml2-acs.php/default-sp',
+        // Issuer could be anything, mostly it makes sense to pass the metadata URL
+        'issuer' => 'https://localhost',
+        
+        // OPTIONAL: Use a specific audience restriction value when creating the SAMLRequest object.
+        //           Default value is the assertion consumer service URL (the base64 encoded SP url). 
+        //           This is a bugfix for Nextcloud as SP and can be removed for normal SPs.
+        'audience_restriction' => 'http://localhost',
+    ],
+    
+],
+```
+
+Creating a new entry can be done using the `createBase64AssertionUrl.php` script. It will simply base64 encode the string using the internal php method `base64_encode` as it is used within the plugin. Passing e.h. an URL `https://sp.laravel.com/saml/login` would end in following entry:
+
+```
+php vendor/kingstarter/laravel-saml/createBase64AssertionUrl.php https://sp.webapp.com/saml/login
+>>> AssertionURL: 'aHR0cHM6Ly9zcC53ZWJhcHAuY29tL3NhbWwvY29uc3VtZQ=='
+```
+
+config/saml.php:
+```
+'sp' => [        
+    
+     ...
+
+    /**
+     * New entry
+     * 
+     * Sample URL:         https://sp.webapp.com/saml/login
+     * Base64 encoded URL: aHR0cHM6Ly9zcC53ZWJhcHAuY29tL3NhbWwvY29uc3VtZQ==
+     */
+    'aHR0cHM6Ly9zcC53ZWJhcHAuY29tL3NhbWwvY29uc3VtZQ==' => [
+        'destination' => 'https://sp.webapp.com/saml/consume',
+        'issuer'      => 'https://sp.webapp.com',
+    ],
+],
+```
+
+#### FileSystem configuration 
 
 Within ```config/filesystem.php``` following entry needs to be added:
 ```

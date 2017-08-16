@@ -171,7 +171,9 @@ trait SamlAuth
                         ->setNotBefore(new \DateTime())
                         ->setNotOnOrAfter(new \DateTime('+1 MINUTE'))
                         ->addItem(
-                            new \LightSaml\Model\Assertion\AudienceRestriction([$authnRequest->getAssertionConsumerServiceURL()])
+                            new \LightSaml\Model\Assertion\AudienceRestriction([
+                                config('saml.sp.'.base64_encode($authnRequest->getAssertionConsumerServiceURL()).'.audience_restriction', 
+                                    $authnRequest->getAssertionConsumerServiceURL())])
                         )
                 )
             ->addItem(
