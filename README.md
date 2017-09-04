@@ -16,13 +16,19 @@ Using ```composer```:
 ``` 
 composer require "kingstarter/laravel-saml":"dev-master"
 ```
-
+#### Laravel 5.4
 Add the service provider to ```config/app.php```
 
 ```
     KingStarter\LaravelSaml\LaravelSamlServiceProvider::class,
 ```
+#### Laravel 5.5
+This package supports Laravel's Package Auto Discovery and should be automatically loaded when required using composer. If the package is not auto discovered run
 
+```bash
+    php artisan package:discover
+```
+#### Configuration
 There is one configuration file to publish and the config/filesystem.php file that needs to be extended. The command
 ```
 php artisan vendor:publish --tag="saml_config"
