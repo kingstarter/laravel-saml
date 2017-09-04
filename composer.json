@@ -19,5 +19,12 @@
         "psr-4": {
             "KingStarter\\LaravelSaml\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+          "providers": [
+            "KingStarter\\LaravelSaml\\LaravelSamlServiceProvider"
+          ]
+        }
     }
 }
