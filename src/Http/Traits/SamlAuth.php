@@ -135,9 +135,13 @@ trait SamlAuth
 
         // We are responding with both the email and the username as attributes
         // TODO: Add here other attributes, e.g. groups / roles / permissions
+        $roles = array();
         if(\Auth::check()){
-            $email = \Auth::user()->email;
-            $name  = \Auth::user()->name;
+            $user  = \Auth::user();
+            $email = $user->email;
+            $name  = $user->name;
+            if (config('saml.forward_roles')
+                $roles = $user->roles->pluck('name')->all();
         }else {
             $email = $request['email'];
             $name  = 'Place Holder';
@@ -165,7 +169,7 @@ trait SamlAuth
                                    ->setRecipient($authnRequest->getAssertionConsumerServiceURL())
                                 )
                         )
-                )            
+                )
                 ->setConditions(
                     (new \LightSaml\Model\Assertion\Conditions())
                         ->setNotBefore(new \DateTime())
@@ -185,6 +189,10 @@ trait SamlAuth
                     ->addAttribute(new \LightSaml\Model\Assertion\Attribute(
                             \LightSaml\ClaimTypes::COMMON_NAME,
                             $name
+                        ))
+                    ->addAttribute(new \LightSaml\Model\Assertion\Attribute(
+                            \LightSaml\ClaimTypes::ROLE,
+                            $roles
                         ))
                 )
             ->addItem(

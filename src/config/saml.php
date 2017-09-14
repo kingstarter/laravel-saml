@@ -22,6 +22,12 @@ return [
     // Include the pre-defined routes from package or not.
     'use_package_routes' => true,
     
+    // Forward user roles
+    // This option requires entrust to be installed and
+    // the user model to support the roles() method. Otherwise an empty
+    // array of user roles will be forwarded.
+    'forward_roles' => false,
+    
     // Allow debugging within SamlAuth trait to get SP data during SAML auth
     // request. The debug output is written to storage/logs/laravel.log.
     'debug_saml_request' => false,
