@@ -140,7 +140,7 @@ trait SamlAuth
             $user  = \Auth::user();
             $email = $user->email;
             $name  = $user->name;
-            if (config('saml.forward_roles')
+            if (config('saml.forward_roles'))
                 $roles = $user->roles->pluck('name')->all();
         }else {
             $email = $request['email'];
