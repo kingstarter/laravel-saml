@@ -16,13 +16,19 @@ Using ```composer```:
 ``` 
 composer require "kingstarter/laravel-saml":"dev-master"
 ```
-
+#### Laravel 5.4
 Add the service provider to ```config/app.php```
 
 ```
     KingStarter\LaravelSaml\LaravelSamlServiceProvider::class,
 ```
+#### Laravel 5.5
+This package supports Laravel's Package Auto Discovery and should be automatically loaded when required using composer. If the package is not auto discovered run
 
+```bash
+    php artisan package:discover
+```
+#### Configuration
 There is one configuration file to publish and the config/filesystem.php file that needs to be extended. The command
 ```
 php artisan vendor:publish --tag="saml_config"
@@ -124,7 +130,7 @@ To use the SAML package, some files need to be modified. Within your login view,
     @endif
 ```
 
-The SAMLRequest field will be filled automatically when a SAMLRequest is send by an http request and therefore initiate a SAML authentication attempt. To initiate the SAML auth, the login and redirect functions need to be modified. Within ```app/Http/Middleware/AuthenticatesUsers.php``` add following lines to both the top and the authenticated function: 
+The SAMLRequest field will be filled automatically when a SAMLRequest is sent by a http request and therefore initiate a SAML authentication attempt. To initiate the SAML auth, the login and redirect functions need to be modified. Within ```app/Http/Middleware/AuthenticatesUsers.php``` add following lines to both the top and the authenticated function: 
 (NOTE: you might need to copy it out from vendor/laravel/framework/src/Illuminate/Foundation/Auth/ to your Middleware directory) 
 
 ```
