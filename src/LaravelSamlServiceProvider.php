@@ -5,6 +5,7 @@ namespace KingStarter\LaravelSaml;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Config;
+use KingStarter\LaravelSaml\Console\EncodeAssertionUrlCommand;
 
 class LaravelSamlServiceProvider extends ServiceProvider
 {
@@ -48,6 +49,30 @@ class LaravelSamlServiceProvider extends ServiceProvider
                 mkdir(storage_path() . "/saml/idp", 0755, true);
             }
         }
+
+        $this->registerCommands();
+    }
+
+    /**
+     * Register the commands.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        $this->registerModuleMakeCommand();
+    }
+
+    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerModuleMakeCommand()
+    {
+        $this->commands([
+            EncodeAssertionUrlCommand::class
+        ]);
     }
 
     /**

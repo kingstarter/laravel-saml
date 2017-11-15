@@ -73,9 +73,15 @@ return [
          * Sample URL:         https://localhost/samlsp/module.php/saml/sp/saml2-acs.php/default-sp
          * Base64 encoded URL: aHR0cHM6Ly9sb2NhbGhvc3Qvc2FtbHNwL21vZHVsZS5waHAvc2FtbC9zcC9zYW1sMi1hY3MucGhwL2RlZmF1bHQtc3A=
          *
-         * Note: To create a new entry, use the createBase64AssertionUrl.php within the vendor package to encode your
-         *       ServiceProvider URL. In case of doubt enable debug_saml_request and check the logfile while performing
-         *       a SAML login request from your SP. 
+         * Note: To create a new entry, use laravel-saml:encodeurl artisan command to encode your ServiceProvider URL.
+         *
+         * php artisan laravel-saml:encodeurl https://localhost/samlsp/module.php/saml/sp/saml2-acs.php/default-sp
+         * --
+         * URL Given: https://sp.webapp.com/saml/login
+         * Encoded AssertionURL:aHR0cHM6Ly9sb2NhbGhvc3Qvc2FtbHNwL21vZHVsZS5waHAvc2FtbC9zcC9zYW1sMi1hY3MucGhwL2RlZmF1bHQtc3A=
+         *
+         * In case of doubt enable debug_saml_request and check the logfile while performing
+         * a SAML login request from your SP.
          */
         'aHR0cHM6Ly9sb2NhbGhvc3Qvc2FtbHNwL21vZHVsZS5waHAvc2FtbC9zcC9zYW1sMi1hY3MucGhwL2RlZmF1bHQtc3A=' => [
         

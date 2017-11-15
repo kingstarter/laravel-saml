@@ -67,11 +67,13 @@ Within the saml.php config file the SAML Service Provider array needs to be fill
 ],
 ```
 
-Creating a new entry can be done using the `createBase64AssertionUrl.php` script. It will simply base64 encode the string using the internal php method `base64_encode` as it is used within the plugin. Passing e.h. an URL `https://sp.laravel.com/saml/login` would end in following entry:
-
-```
-php vendor/kingstarter/laravel-saml/createBase64AssertionUrl.php https://sp.webapp.com/saml/login
->>> AssertionURL: 'aHR0cHM6Ly9zcC53ZWJhcHAuY29tL3NhbWwvY29uc3VtZQ=='
+You can generate the base_64 encoded AssertionURL by using the following artisan command.
+ 
+```bash
+   $ php artisan laravel-saml:encodeurl https://sp.webapp.com/saml/login
+   --
+   URL Given: https://sp.webapp.com/saml/login
+   Encoded AssertionURL:aHR0cHM6Ly9zcC53ZWJhcHAuY29tL3NhbWwvbG9naW4=
 ```
 
 config/saml.php:
