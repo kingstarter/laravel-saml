@@ -12,6 +12,18 @@ use Illuminate\Support\Facades\Log;
 
 trait SamlAuth
 {
+    /**
+     * SamlAuth constructor.
+     * @param Request $request
+     */
+    public function __construct(Request $request)
+    {
+        // Store RelayState to session if provided
+        if(!empty($request->input('RelayState'))){
+            session()->put('RelayState', $request->input('RelayState'));
+        }
+    }
+
     /*
     |--------------------------------------------------------------------------
     | File handling (metadata, certificates)
@@ -133,6 +145,8 @@ trait SamlAuth
             ->setSignature(new \LightSaml\Model\XmlDSig\SignatureWriter($certificate, $privateKey))
         ;
 
+        $this->addRelayStateToResponse($response);
+
         // We are responding with both the email and the username as attributes
         // TODO: Add here other attributes, e.g. groups / roles / permissions
         $roles = array();
@@ -225,5 +239,16 @@ trait SamlAuth
         /** @var \Symfony\Component\HttpFoundation\Response $httpResponse */
         $httpResponse = $postBinding->send($messageContext);
         print $httpResponse->getContent()."\n\n";
+    }
+
+    /**
+     * @param $response
+     */
+    protected function addRelayStateToResponse($response)
+    {
+        if (session()->has('RelayState')) {
+            $response->setRelayState(session()->get('RelayState'));
+            session()->remove('RelayState');
+        }
     }
 }
