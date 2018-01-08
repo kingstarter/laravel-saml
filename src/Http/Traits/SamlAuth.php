@@ -12,17 +12,6 @@ use Illuminate\Support\Facades\Log;
 
 trait SamlAuth
 {
-    /**
-     * SamlAuth constructor.
-     * @param Request $request
-     */
-    public function __construct(Request $request)
-    {
-        // Store RelayState to session if provided
-        if(!empty($request->input('RelayState'))){
-            session()->put('RelayState', $request->input('RelayState'));
-        }
-    }
 
     /*
     |--------------------------------------------------------------------------
@@ -86,6 +75,11 @@ trait SamlAuth
      * @return void
      */    
     public function handleSamlLoginRequest($request) {
+        // Store RelayState to session if provided
+        if(!empty($request->input('RelayState'))){
+            session()->put('RelayState', $request->input('RelayState'));
+        }
+        // Handle SamlRequest if provided, otherwise just exit
         if (isset($request->SAMLRequest)) {
             // Get and decode the SAML request
             $SAML = $request->SAMLRequest;

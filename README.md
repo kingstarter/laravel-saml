@@ -1,6 +1,6 @@
 # Laravel SAML
 
-Laravel-SAML adds SAML support to make a laravel application to both a SAML identity provider (IDP) and a SAML service provider (SP). The package is designed to work with Laravel 5.4.
+Laravel-SAML adds SAML support to make a laravel application to both a SAML identity provider (IDP) and a SAML service provider (SP). The package is designed to work with Laravel 5.4 / 5.5.
 
 The package is mostly designed to function according to following guide:
 https://imbringingsyntaxback.com/implementing-a-saml-idp-with-laravel/
@@ -199,7 +199,19 @@ class RedirectIfAuthenticated
 }
 ```
 
-## SAML Service Providers
+## SAML Service Providers (SPs)
 
-To add one or more service providers, go to the ```config/saml.php``` configuration file and scroll down to the 'sp' array. Having the Login-Address of the SAML-SP, add another entry. For reasons of internal interpretation, the URL needs to be Base64 encoded. In case that there are some problems receiving the Base64 string, it is always possible to use the debugger setting the ```saml.debug_saml_request``` flag within the config file. Make sure that the environmental logging variable ```APP_LOG_LEVEL``` is set to debug.
+To add one or more service providers, go to the ```config/saml.php``` configuration file and scroll down to the 'sp' array. Having the Login-Address of the SAML-SP, add another entry. For reasons of internal interpretation, the URL needs to be Base64 encoded. 
+
+### Debugging SP entries
+
+In case that there are some problems receiving the Base64 string or evaluating SAML authentication requests in general, it is possible to use the debugger setting ```saml.debug_saml_request``` within the config file. 
+
+```
+    // Allow debugging within SamlAuth trait to get SP data  
+    // during SAML authentication request
+    'debug_saml_request' => true,
+```
+
+Make sure that the environmental logging variable ```APP_LOG_LEVEL``` is set to debug within your ```.env``` file.
 
