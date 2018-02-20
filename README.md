@@ -16,13 +16,18 @@ Using ```composer```:
 ``` 
 composer require "kingstarter/laravel-saml":"dev-master"
 ```
+
+#### Lightsaml dependency problem
+
+In case you run in a current lightsaml dependency problem regarding symfony 4 (event dispatcher) you might consider [using a fork of lightsaml allowing to use symfony 4](https://github.com/kingstarter/laravel-saml/issues/8#issuecomment-366991715).
+
 #### Laravel 5.4
 Add the service provider to ```config/app.php```
 
 ```
     KingStarter\LaravelSaml\LaravelSamlServiceProvider::class,
 ```
-#### Laravel 5.5
+#### Laravel 5.5+
 This package supports Laravel's Package Auto Discovery and should be automatically loaded when required using composer. If the package is not auto discovered run
 
 ```bash
