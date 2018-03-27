@@ -117,7 +117,7 @@ The package controllers are using the ```storage/saml``` path for retrieving bot
 
 ```
 mkdir -p storage/saml/idp
-touch storage/saml/{metadata.xml,cert.pem,key.pem}
+touch storage/saml/idp/{metadata.xml,cert.pem,key.pem}
 ```
 
 Add the contents to the metadata.xml, cert.pem and key.pem files for the IDP. 
