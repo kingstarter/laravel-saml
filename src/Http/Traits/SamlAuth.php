@@ -21,21 +21,24 @@ trait SamlAuth
     
     /**
      * Get either the url or the content of a given file.
-     */    
-    protected function getSamlFile($configPath, $url) {
-        if ($url)
+     */
+    protected function getSamlFile($configPath, $url)
+    {
+        if ($url) {
             return Storage::disk('saml')->url($configPath);
+        }
         return Storage::disk('saml')->get($configPath);
-    }    
+    }
     
     /**
      * Get either the url or the content of the saml metadata file.
      *
      * @param boolean url   Set to true to get the metadata url, otherwise the
-     *                      file content will be returned. Defaults to false.   
+     *                      file content will be returned. Defaults to false.
      * @return String with either the url or the content
      */
-    protected function metadata($url = false) {
+    protected function metadata($url = false)
+    {
         return $this->getSamlFile(config('saml.idp.metadata'), $url);
     }
     
@@ -43,10 +46,11 @@ trait SamlAuth
      * Get either the url or the content of the certificate file.
      *
      * @param boolean url   Set to true to get the certificate url, otherwise the
-     *                      file content will be returned. Defaults to false.   
+     *                      file content will be returned. Defaults to false.
      * @return String with either the url or the content
      */
-    protected function certfile($url = false) {
+    protected function certfile($url = false)
+    {
         return $this->getSamlFile(config('saml.idp.cert'), $url);
     }
 
@@ -54,10 +58,11 @@ trait SamlAuth
      * Get either the url or the content of the certificate keyfile.
      *
      * @param boolean url   Set to true to get the certificate key url, otherwise
-     *                      the file content will be returned. Defaults to false.   
+     *                      the file content will be returned. Defaults to false.
      * @return String with either the url or the content
      */
-    protected function keyfile($url = false) {
+    protected function keyfile($url = false)
+    {
         return $this->getSamlFile(config('saml.idp.key'), $url);
     }
     
@@ -65,18 +70,19 @@ trait SamlAuth
     |--------------------------------------------------------------------------
     | Saml authentication
     |--------------------------------------------------------------------------
-    */    
+    */
 
     /**
      * Handle an http request as saml authentication request. Note that the method
-     * should only be called in case a saml request is also included. 
+     * should only be called in case a saml request is also included.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return void
-     */    
-    public function handleSamlLoginRequest($request) {
+     */
+    public function handleSamlLoginRequest($request)
+    {
         // Store RelayState to session if provided
-        if(!empty($request->input('RelayState'))){
+        if (!empty($request->input('RelayState'))) {
             session()->put('RelayState', $request->input('RelayState'));
         }
         // Handle SamlRequest if provided, otherwise just exit
@@ -112,7 +118,7 @@ trait SamlAuth
 
         // Load in both certificate and keyfile
         // The files are stored within a private storage path, this prevents from
-        // making them accessible from outside  
+        // making them accessible from outside
         $x509 = new X509Certificate();
         $certificate = $x509->loadPem($this->certfile());
         // Load in keyfile content (last parameter determines of the first one is a file or its content)
@@ -144,16 +150,18 @@ trait SamlAuth
         // We are responding with both the email and the username as attributes
         // TODO: Add here other attributes, e.g. groups / roles / permissions
         $roles = array();
-        if(\Auth::check()){
-            $user  = \Auth::user();
-            $email = $user->email;
-            $name  = $user->name;
-            if (config('saml.forward_roles'))
+        if (\Auth::check()) {
+            $user   = \Auth::user();
+            $nameID = $this->getNameId($user, $authnRequest);
+            $email  = $user->email;
+            $name   = $user->name;
+            if (config('saml.forward_roles')) {
                 $roles = $user->roles->pluck('name')->all();
-        }else {
+            }
+        } else {
             $email = $request['email'];
             $name  = 'Place Holder';
-        }        
+        }
         
         // Generate the SAML assertion for the response xml object
         $assertion
@@ -162,60 +170,61 @@ trait SamlAuth
             ->setIssuer(new \LightSaml\Model\Assertion\Issuer($issuer))
             
             ->setSubject(
-                    (new \LightSaml\Model\Assertion\Subject())
+                (new \LightSaml\Model\Assertion\Subject())
                         ->setNameID(new \LightSaml\Model\Assertion\NameID(
-                            $email,
+                            $nameID,
                             \LightSaml\SamlConstants::NAME_ID_FORMAT_EMAIL
                         ))
                     ->addSubjectConfirmation(
-                            (new \LightSaml\Model\Assertion\SubjectConfirmation())
+                        (new \LightSaml\Model\Assertion\SubjectConfirmation())
                            ->setMethod(\LightSaml\SamlConstants::CONFIRMATION_METHOD_BEARER)
                            ->setSubjectConfirmationData(
-                                    (new \LightSaml\Model\Assertion\SubjectConfirmationData())
+                               (new \LightSaml\Model\Assertion\SubjectConfirmationData())
                                    ->setInResponseTo($authnRequest->getId())
                                    ->setNotOnOrAfter(new \DateTime('+1 MINUTE'))
                                    ->setRecipient($authnRequest->getAssertionConsumerServiceURL())
-                                )
-                        )
-                )
+                           )
+                    )
+            )
                 ->setConditions(
                     (new \LightSaml\Model\Assertion\Conditions())
                         ->setNotBefore(new \DateTime())
                         ->setNotOnOrAfter(new \DateTime('+1 MINUTE'))
                         ->addItem(
                             new \LightSaml\Model\Assertion\AudienceRestriction([
-                                config('saml.sp.'.base64_encode($authnRequest->getAssertionConsumerServiceURL()).'.audience_restriction', 
-                                    $authnRequest->getAssertionConsumerServiceURL())])
+                                config(
+                                    'saml.sp.'.base64_encode($authnRequest->getAssertionConsumerServiceURL()).'.audience_restriction',
+                                    $authnRequest->getAssertionConsumerServiceURL()
+                                )])
                         )
                 )
             ->addItem(
-                    (new \LightSaml\Model\Assertion\AttributeStatement())
+                (new \LightSaml\Model\Assertion\AttributeStatement())
                     ->addAttribute(new \LightSaml\Model\Assertion\Attribute(
-                            \LightSaml\ClaimTypes::EMAIL_ADDRESS,
-                            $email
-                        ))
+                        \LightSaml\ClaimTypes::EMAIL_ADDRESS,
+                        $email
+                    ))
                     ->addAttribute(new \LightSaml\Model\Assertion\Attribute(
-                            \LightSaml\ClaimTypes::COMMON_NAME,
-                            $name
-                        ))
+                        \LightSaml\ClaimTypes::COMMON_NAME,
+                        $name
+                    ))
                     ->addAttribute(new \LightSaml\Model\Assertion\Attribute(
-                            \LightSaml\ClaimTypes::ROLE,
-                            $roles
-                        ))
-                )
+                        \LightSaml\ClaimTypes::ROLE,
+                        $roles
+                    ))
+            )
             ->addItem(
-                    (new \LightSaml\Model\Assertion\AuthnStatement())
-                    ->setAuthnInstant(new \DateTime('-10 MINUTE'))
-                    ->setSessionIndex('_some_session_index')
-                    ->setAuthnContext(
-                            (new \LightSaml\Model\Assertion\AuthnContext())
-                           ->setAuthnContextClassRef(\LightSaml\SamlConstants::AUTHN_CONTEXT_PASSWORD_PROTECTED_TRANSPORT)
-                        )
+                (new \LightSaml\Model\Assertion\AuthnStatement())
+                ->setAuthnInstant(new \DateTime('-10 MINUTE'))
+                ->setSessionIndex('_some_session_index')
+                ->setAuthnContext(
+                    (new \LightSaml\Model\Assertion\AuthnContext())
+                       ->setAuthnContextClassRef(\LightSaml\SamlConstants::AUTHN_CONTEXT_PASSWORD_PROTECTED_TRANSPORT)
                 )
-            ;
+            );
             
-            // Send out the saml response
-            $this->sendSamlResponse($response);
+        // Send out the saml response
+        $this->sendSamlResponse($response);
     }
 
     /**
@@ -244,5 +253,17 @@ trait SamlAuth
             $response->setRelayState(session()->get('RelayState'));
             session()->remove('RelayState');
         }
+    }
+
+    /**
+     * Get the NameID attribute to be used.
+     * @param  User $user
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    protected function getNameId($user, $authnRequest)
+    {
+        $nameIdAttribute = config('saml.sp.'.base64_encode($authnRequest->getAssertionConsumerServiceURL()).'.nameID', 'email');
+        return $user->{$nameIdAttribute};
     }
 }

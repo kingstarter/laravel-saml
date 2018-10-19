@@ -57,13 +57,19 @@ Within the saml.php config file the SAML Service Provider array needs to be fill
     
         // The destination is the consuming SAML URL. This might be a SamlAuthController receiving the SAML response.  
         'destination' => 'https://localhost/samlsp/module.php/saml/sp/saml2-acs.php/default-sp',
+        
         // Issuer could be anything, mostly it makes sense to pass the metadata URL
+        // This is the IDP Entity ID that will be sent to the SP.
         'issuer' => 'https://localhost',
         
         // OPTIONAL: Use a specific audience restriction value when creating the SAMLRequest object.
         //           Default value is the assertion consumer service URL (the base64 encoded SP url). 
         //           This is a bugfix for Nextcloud as SP and can be removed for normal SPs.
         'audience_restriction' => 'http://localhost',
+
+        // OPTIONAL: Use to override the default email attribute to set a custom NameID value for a SP
+        //           The NameID attribute must be a property on the User model.
+        'nameID' => 'username',
     ],
     
 ],
