@@ -1,6 +1,6 @@
 # ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) IMPORTANT NOTE : LOOKING FOR OWNER
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) __No more active development: As I am currently not able to keep on developing this repository and there are many forks and PRs, I would be very glad to transfer the repository to someone else. Please let me know by [writing me an email](mailto:git%40kingstarter.de%3Fsubject%3DRequest%20of%20ownership%20for%20github%40kingstarter%2Flaravel-saml).__
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) __No more active development: As I am currently not able to keep on developing this repository and there are many forks and PRs, I would be very glad to transfer the repository to someone else. Please let me know by writing me an email to <git@kingstarter.de>.__
 
 # Laravel SAML
 
